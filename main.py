@@ -29,11 +29,11 @@ def userAppend(nestledDict: list) -> None:
         "posts": int(input("Podaj liczbe jego postów: "))})
 
 
-# def userRemove(nestledDict: list) -> None:
-#     tmp_userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
-#     for user in nestledDict:
-#         if user["alias_name"] == tmp_userBeingRemoved:
-#             nestledDict.remove(user)
+def userRemove(nestledDict: list) -> None:
+    tmp_userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
+    for user in nestledDict:
+        if user["alias_name"] == tmp_userBeingRemoved:
+            nestledDict.remove(user)
 
 
 # def userUpdate(nestledDict: list) -> None:
@@ -57,7 +57,7 @@ while True:
         userAppend(users)
     if tmp_choice == 3:
         print("Wybrano funkcje usuwania znajomych")
-        # userRemove(users)
+        userRemove(users)
     if tmp_choice == 4:
         print("Wybrano funkcje aktualizowania znajoymch")
         # userUpdate(users)
