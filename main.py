@@ -36,14 +36,13 @@ def userRemove(nestledDict: list) -> None:
             nestledDict.remove(user)
 
 
-# def userUpdate(nestledDict: list) -> None:
-#     tmp_userToUpdate = str(input("Jak nazywa sie uzytkownik do zaktualizowania? "))
-#     for list in nestledDict:
-#         if list["alias_name"] == tmp_userToUpdate:
-#             list.update({"alias_name": str(input("Podaj nowe imie: "))})
-#             list.update({"location": str(input("Podaj nowa lokalizacje: "))})
-#             list.update({"posts": int(input("Podaj nowa liczbe postow: "))})
-
+def userUpdate(nestledDict: list) -> None:
+    tmp_userToUpdate = str(input("Jak nazywa sie uzytkownik do zaktualizowania? "))
+    for list in nestledDict:
+        if list["alias_name"] == tmp_userToUpdate:
+            list.update({"alias_name": str(input("Podaj nowe imie: "))})
+            list.update({"location": str(input("Podaj nowa lokalizacje: "))})
+            list.update({"posts": int(input("Podaj nowa liczbe postow: "))})
 
 
 while True:
@@ -61,4 +60,4 @@ while True:
         userRemove(users)
     if tmp_choice == 4:
         print("Wybrano funkcje aktualizowania znajoymch")
-        # userUpdate(users)
+        userUpdate(users)
