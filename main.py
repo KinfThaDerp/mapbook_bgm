@@ -45,6 +45,7 @@ def userRemove(nestledDict: list) -> None:
 #             list.update({"posts": int(input("Podaj nowa liczbe postow: "))})
 
 
+
 while True:
     tmp_choice: int = int(input("Wybierz opcje menu: "))
     if tmp_choice == 0:
