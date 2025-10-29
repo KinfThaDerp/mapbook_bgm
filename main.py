@@ -22,15 +22,27 @@ def userInfo(nestledDict: list) -> None:
                 f"Twój znajomy {user["alias_name"]} z miejscowości {user["location"]} opublikował {user['posts']} postów.")
 
 
-# def userAppend(nestledDict: list) -> None:
-#     nestledDict.append({
-#         "alias_name": str(input("Podaj imię znajomego: ")),
-#         "location": str(input("Podaj jego miejscowość: ")),
-#         "posts": 0})
-#
-#
+def userAppend(nestledDict: list) -> None:
+    nestledDict.append({
+        "alias_name": str(input("Podaj imię znajomego: ")),
+        "location": str(input("Podaj jego miejscowość: ")),
+        "posts": int(input("Podaj liczbe jego postów: "))})
+
+
 # def userRemove(nestledDict: list) -> None:
-#     userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
+#     tmp_userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
+#     for user in nestledDict:
+#         if user["alias_name"] == tmp_userBeingRemoved:
+#             nestledDict.remove(user)
+
+
+# def userUpdate(nestledDict: list) -> None:
+#     tmp_userToUpdate = str(input("Jak nazywa sie uzytkownik do zaktualizowania? "))
+#     for list in nestledDict:
+#         if list["alias_name"] == tmp_userToUpdate:
+#             list.update({"alias_name": str(input("Podaj nowe imie: "))})
+#             list.update({"location": str(input("Podaj nowa lokalizacje: "))})
+#             list.update({"posts": int(input("Podaj nowa liczbe postow: "))})
 
 
 while True:
@@ -42,9 +54,10 @@ while True:
         userInfo(users)
     if tmp_choice == 2:
         print("Wybrano funkcje dodawania znajomych")
-        #userAppend(users)
+        userAppend(users)
     if tmp_choice == 3:
         print("Wybrano funkcje usuwania znajomych")
-        #userRemove(users)
+        # userRemove(users)
     if tmp_choice == 4:
         print("Wybrano funkcje aktualizowania znajoymch")
+        # userUpdate(users)
