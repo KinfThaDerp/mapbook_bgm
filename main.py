@@ -12,8 +12,8 @@ users: list = [
 ]
 
 
-def userInfo(nestledDict: list) -> None:
-    for user in nestledDict:
+def userInfo(userData: list) -> None:
+    for user in userData:
         if user["alias_name"][-1] == "a":
             print(
                 f"Twoja znajoma {user["alias_name"]} z miejscowości {user["location"]} opublikowała {user['posts']} postów.")
@@ -22,23 +22,23 @@ def userInfo(nestledDict: list) -> None:
                 f"Twój znajomy {user["alias_name"]} z miejscowości {user["location"]} opublikował {user['posts']} postów.")
 
 
-def userAppend(nestledDict: list) -> None:
-    nestledDict.append({
+def userAppend(userData: list) -> None:
+    userData.append({
         "alias_name": str(input("Podaj imię znajomego: ")),
         "location": str(input("Podaj jego miejscowość: ")),
         "posts": int(input("Podaj liczbe jego postów: "))})
 
 
-def userRemove(nestledDict: list) -> None:
+def userRemove(userData: list) -> None:
     tmp_userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
-    for user in nestledDict:
+    for user in userData:
         if user["alias_name"] == tmp_userBeingRemoved:
-            nestledDict.remove(user)
+            userData.remove(user)
 
 
-def userUpdate(nestledDict: list) -> None:
+def userUpdate(userData: list) -> None:
     tmp_userToUpdate = str(input("Jak nazywa sie uzytkownik do zaktualizowania? "))
-    for list in nestledDict:
+    for list in userData:
         if list["alias_name"] == tmp_userToUpdate:
             list.update({"alias_name": str(input("Podaj nowe imie: "))})
             list.update({"location": str(input("Podaj nowa lokalizacje: "))})
