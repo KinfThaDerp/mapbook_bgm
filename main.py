@@ -84,6 +84,7 @@ while True:
     print("3. Usuwanie znajomego")
     print("4. Aktualizacja znajomego")
     print("5. Wyświetl mapę znajomych")
+    print('================================================================')
     tmp_choice: int = int(input("Wybierz opcje menu: "))
     if tmp_choice == 0:
         break
@@ -102,4 +103,3 @@ while True:
     if tmp_choice == 5:
         print("Wybrano funkcję wyświetlania mapy użytkowników")
         get_map(users)
-    print('================================================================')
