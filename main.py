@@ -19,6 +19,9 @@ class User:
         self.posts = posts
         self.img_url = img_url
         self.coords = self.get_Coordinates()
+        print(self.coords)
+        self.marker = map_widget.set_position(self.coords[0], self.coords[1], text=self.name, image_zoom_visibility=(0,float('inf') ))
+        self.marker.change_icon()
 
     def get_Coordinates(self):
         import requests
@@ -32,7 +35,6 @@ class User:
         response_html = BeautifulSoup(response.content, 'html.parser')
         latitude = float((response_html.select('.latitude'))[1].text.replace(',','.'))
         longitude = float((response_html.select('.longitude'))[1].text.replace(',','.'))
-        #print(latitude, '\n', longitude)
         return [latitude, longitude]
 
 def add_user(userData: list) -> None:
@@ -58,6 +60,7 @@ def user_info(userData: list) -> None:
 
 def delete_user(userData: list) -> None:
     i = list_box.index(ACTIVE)
+    userData[i].marker.delete()
     userData.pop(i)
     user_info(userData)
     print(i)
@@ -67,6 +70,9 @@ def user_details(userData: list) -> None:
     label_imie_szczegoly_obiektu_wartosc.config(text=f"{userData[i].name}")
     label_lokalizacja_szczegoly_obiektu_wartosc.config(text=f"{userData[i].location}")
     label_posty_szczegoly_obiektu_wartosc.config(text=f"{userData[i].posts}")
+    map_widget.set_position(userData[i].coords[0], userData[i].coords[1])
+    map_widget.set_zoom(15)
+
 
 def edit_user(userData: list) -> None:
     i = list_box.index(ACTIVE)
@@ -83,6 +89,10 @@ def update_user(userData: list, i: int) -> None:
     userData[i].location = str(entry_location.get())
     userData[i].posts = int(entry_posty.get())
     userData[i].img_url = str(entry_img_url.get())
+
+    userData[i].coords = userData[i].get_Coordinates()
+    userData[i].marker.set_position(userData[i].coords[0], userData[i].coords[1], userData[i].name)
+
     user_info(userData)
 
     button_dodaj_obiekt.config(text="Dodaj obiekt", command=lambda: add_user(users))
