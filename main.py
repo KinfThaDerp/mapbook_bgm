@@ -21,7 +21,6 @@ class User:
         self.coords = self.get_Coordinates()
         print(self.coords)
         self.marker = map_widget.set_position(self.coords[0], self.coords[1], text=self.name, image_zoom_visibility=(0,float('inf') ))
-        self.marker.change_icon()
 
     def get_Coordinates(self):
         import requests
