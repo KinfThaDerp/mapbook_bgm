@@ -1,85 +1,87 @@
 import requests
 from bs4 import BeautifulSoup
+from mapbook_lib.model import User
+from tkinter import *
 
-class User:
-    def __init__(self, name:str, location:str, posts:int, img_url:str):
-        self.name = name
-        self.location = location
-        self.posts = posts
-        self.img_url = img_url
-        self.coords = self.get_Coordinates()
-
-    def get_Coordinates(self):
-        import requests
-        from bs4 import BeautifulSoup
-        headers = {
-            "User-Agent": "<Mozilla 5/0 (Windows NT 10.0; Win64; x64; Trident/7.0)>",
-        }
-        url:str = f'https://pl.wikipedia.org/wiki/{self.location}'
-        response = requests.get(url, headers=headers)
-        #print(response.text)
-        response_html = BeautifulSoup(response.content, 'html.parser')
-        latitude = float((response_html.select('.latitude'))[1].text.replace(',','.'))
-        longitude = float((response_html.select('.longitude'))[1].text.replace(',','.'))
-        #print(latitude, '\n', longitude)
-        return [latitude, longitude]
-
-
-def userInfo(userData: list) -> None:
-    for user in userData:
-        if user.name[-1] == "a":
-            print(
-                f"Twoja znajoma {user.name} z miejscowości {user.location} opublikowała {user.posts} postów.")
-        else:
-            print(
-                f"Twój znajomy {user.name} z miejscowości {user.location} opublikował {user.posts} postów.")
-
-
-def userAppend(userData: list) -> None:
+def add_user(userData: list, entry_name, entry_location, entry_posty, entry_img_url, map_widget, list_box) -> None:
     userData.append(User(
-        name=str(input("Podaj imię znajomego: ")),
-        location=str(input("Podaj jego miejscowość: ")),
-        posts = int(input("Podaj liczbe jego postów: ")),
-        img_url=str(input("Podaj URL zdjęcia tej osoby: "))
-        ))
+        name=str(entry_name.get()),
+        location=str(entry_location.get()),
+        posts=int(entry_posty.get()),
+        img_url=str(entry_img_url.get()),
+        map_widget=map_widget
+    ))
+    user_info(userData, list_box)
+    entry_name.delete(0, END)
+    entry_location.delete(0, END)
+    entry_posty.delete(0, END)
+    entry_img_url.delete(0, END)
+    entry_name.focus()
 
-def userRemove(userData: list) -> None:
-    tmp_userBeingRemoved: str = str(input("Podaj imię znajomego do usunięcia: "))
-    for user in userData:
-        if user.name == tmp_userBeingRemoved:
-            userData.remove(user)
+def user_info(userData: list, list_box) -> None:
+    list_box.delete(0, END)
+    for idx, user in enumerate(userData):
+        list_box.insert(idx, f"{user.name} {user.location} {user.posts} postów")
 
+def delete_user(userData: list, list_box) -> None:
+    i = list_box.index(ACTIVE)
+    temp_user = userData[i]
 
-def userUpdate(userData: list) -> None:
-    tmp_userToUpdate = str(input("Jak nazywa sie uzytkownik do zaktualizowania? "))
-    for user in userData:
-        if user.name == tmp_userToUpdate:
-            user.name = str(input("Podaj nowe imie: "))
-            user.location = str(input("Podaj nowa lokalizacje: "))
-            user.posts = int(input("Podaj nowa liczbe postow: "))
-            user.coords = user.get_Coordinates()
+    if isinstance(temp_user, User):
+        # Proceed with marker deletion if it's a User object
+        temp_user.marker.delete()
+        userData.pop(i)
+        user_info(userData, list_box)
+        print(f"Deleted user at index {i}")
+    else:
+        # This will print if there's something other than a User object in userData
+        print(f"Error: Expected User object but got {type(temp_user)}")
 
+def user_details(userData: list, list_box, label_imie_szczegoly_obiektu_wartosc, label_lokalizacja_szczegoly_obiektu_wartosc, label_posty_szczegoly_obiektu_wartosc, map_widget) -> None:
+    i = list_box.index(ACTIVE)
+    label_imie_szczegoly_obiektu_wartosc.config(text=f"{userData[i].name}")
+    label_lokalizacja_szczegoly_obiektu_wartosc.config(text=f"{userData[i].location}")
+    label_posty_szczegoly_obiektu_wartosc.config(text=f"{userData[i].posts}")
+    map_widget.set_position(userData[i].coords[0], userData[i].coords[1])
+    map_widget.set_zoom(15)
 
+def edit_user(userData: list, entry_name, entry_location, entry_posty, entry_img_url, button_dodaj_obiekt, list_box) -> None:
+    # Set a flag or keep track of the user being edited
+    i = list_box.index(ACTIVE)
+    # Populate the form fields with the existing user's data
+    entry_name.insert(0, userData[i].name)
+    entry_location.insert(0, userData[i].location)
+    entry_posty.insert(0, userData[i].posts)
+    entry_img_url.insert(0, userData[i].img_url)
 
-def get_map(userData: list) -> None:
-    import folium
-    m = folium.Map(location=(52.23, 21), zoom_start=6)
-    import webbrowser
+    # Change the button to "Save Changes"
+    button_dodaj_obiekt.config(
+        text="Zapisz edycje",
+        command=lambda: update_user(userData, i, entry_name, entry_location, entry_posty, entry_img_url, button_dodaj_obiekt, list_box)
+    )
+def update_user(userData: list, i: int, entry_name, entry_location, entry_posty, entry_img_url, button_dodaj_obiekt, list_box) -> None:
+    # Update user data from the form
+    userData[i].name = str(entry_name.get())
+    userData[i].location = str(entry_location.get())
+    userData[i].posts = int(entry_posty.get())
+    userData[i].img_url = str(entry_img_url.get())
 
-    for user in userData:
-        folium.Marker(
-            location= user.coords,
-            tooltip=f"Kliknij mnie!",
-            popup=f"<h4>user: {user.name}</h4> {user.location}, {user.posts}, <img class='shrinkToFit' src='{user.img_url}/>",
-            icon=folium.Icon(icon="cloud"),
-        ).add_to(m)
+    # Update coordinates and marker
+    userData[i].coords = userData[i].get_Coordinates()
+    userData[i].marker.set_position(userData[i].coords[0], userData[i].coords[1], userData[i].name)
 
-    m.save("index.html")
-    webbrowser.open('index.html')
+    # Refresh the list of users
+    user_info(userData, list_box)
 
-if __name__ == '__main__':
-    userData = []
-    userAppend(userData)
-    userRemove(userData)
-    userInfo(userData)
+    # Change the button back to "Add User"
+    button_dodaj_obiekt.config(
+        text="Dodaj obiekt",
+        command=lambda: add_user(users, entry_name, entry_location, entry_posty, entry_img_url, map_widget, list_box)
+    )
 
+    # Clear the form fields
+    entry_name.delete(0, END)
+    entry_location.delete(0, END)
+    entry_posty.delete(0, END)
+    entry_img_url.delete(0, END)
+    entry_name.focus()
