@@ -1,7 +1,17 @@
-from mapbook_lib.controller import userInfo, userAppend, userRemove, userUpdate, get_map
-from mapbook_lib.model import users
 from tkinter import *
 import tkintermapview
+import psycopg2
+
+from mapbook_lib.model import users
+from mapbook_lib.controller import userInfo, userAppend, userRemove, userUpdate, get_map
+
+db_engine = psycopg2.connect(
+    user="postgres",
+    database="postgres",
+    password="1234",
+    port="5432",
+    host="localhost"
+)
 
 # zmienna_na_licznik = 0
 # def updateLicznik():
@@ -36,25 +46,38 @@ class User:
         longitude = float((response_html.select('.longitude'))[1].text.replace(',','.'))
         return [latitude, longitude]
 
-def add_user(userData: list) -> None:
-    userData.append(User(
+def add_user(userData: list, db_engine=db_engine) -> None:
+    cursor = db_engine.cursor()
+    user = User(
         name=str(entry_name.get()),
         location=str(entry_location.get()),
         posts=int(entry_posty.get()),
         img_url=str(entry_img_url.get()),
-        ))
-    user_info(userData)
+    )
+    userData.append(user)
+    SQL = f"INSERT INTO public.users(name, location, posts, img_url, coords)	VALUES ('{user.name}', '{user.location}', {user.posts}, '{user.img_url}', ARRAY[{user.coords[0]}, {user.coords[1]}]);"
+
+
     entry_name.delete(0, END)
     entry_location.delete(0, END)
     entry_posty.delete(0, END)
     entry_img_url.delete(0, END)
     entry_name.focus()
 
+    cursor.execute(SQL)
+    db_engine.commit()
+    user_info(userData)
 
-def user_info(userData: list) -> None:
+
+
+def user_info(userData: list, db_engine=db_engine, cursor=db_engine.cursor()) -> None:
     list_box.delete(0, END)
-    for idx, user in enumerate(userData):
-        list_box.insert(idx, f"{user.name} {user.location} {user.posts} postów")
+    SQL = "SELECT * FROM public.users"
+    cursor.execute(SQL)
+    global users
+    users = cursor.fetchall()
+    for idx, user in enumerate(users):
+        list_box.insert(idx, f"{user[1]} {user[2]} {user[3]} postów")
 
 
 def delete_user(userData: list) -> None:
@@ -66,9 +89,12 @@ def delete_user(userData: list) -> None:
 
 def user_details(userData: list) -> None:
     i = list_box.index(ACTIVE)
-    label_imie_szczegoly_obiektu_wartosc.config(text=f"{userData[i].name}")
-    label_lokalizacja_szczegoly_obiektu_wartosc.config(text=f"{userData[i].location}")
-    label_posty_szczegoly_obiektu_wartosc.config(text=f"{userData[i].posts}")
+    label_imie_szczegoly_obiektu_wartosc.config(text=f"{userData[i][1]}")
+    label_lokalizacja_szczegoly_obiektu_wartosc.config(text=f"{userData[i][2]}")
+    label_posty_szczegoly_obiektu_wartosc.config(text=f"{userData[i][3]}")
+
+    #tmp_coords=list(map(float, userData[i][-1][16:-1].split()))
+    #map_widget.set_position(tmp_coords[0], tmp_coords[1])
     map_widget.set_position(userData[i].coords[0], userData[i].coords[1])
     map_widget.set_zoom(15)
 
@@ -210,5 +236,6 @@ map_widget.grid(row=0,column=0)
 
 # napis = Label(root,text=f"{zmienna_na_licznik}")
 # napis.grid(column=1,row=0)
+
 
 root.mainloop()
