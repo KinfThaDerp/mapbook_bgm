@@ -3,12 +3,6 @@ from mapbook_lib.model import users
 from tkinter import *
 import tkintermapview
 
-# zmienna_na_licznik = 0
-# def updateLicznik():
-#     global zmienna_na_licznik
-#     zmienna_na_licznik += 1
-#     napis.config(text=str(zmienna_na_licznik))
-#     return
 
 users: list = []
 
@@ -20,7 +14,7 @@ class User:
         self.img_url = img_url
         self.coords = self.get_Coordinates()
         print(self.coords)
-        self.marker = map_widget.set_position(self.coords[0], self.coords[1], text=self.name, image_zoom_visibility=(0,float('inf') ))
+        self.marker = map_widget.set_marker(self.coords[0], self.coords[1], text=self.name, image_zoom_visibility=(0,float('inf') ))
 
     def get_Coordinates(self):
         import requests
@@ -116,7 +110,7 @@ ramka_mapa = Frame(root)
 ramka_lista_obiektow.grid(row=0, column=0)
 ramka_formularz.grid(row=0, column=1)
 ramka_szczegoly_obiektu.grid(row=1, column=0)
-ramka_mapa.grid(row=2, column=0)
+ramka_mapa.grid(row=2, column=0, columnspan=2)
 
 # RAMKA LISTA OBIEKTÓW
 label_lista_obiektow = Label(ramka_lista_obiektow, text="Lista Obiektów")
@@ -201,14 +195,5 @@ map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1025, height=600, c
 map_widget.set_position(52.0,21.0)
 map_widget.set_zoom(6)
 map_widget.grid(row=0,column=0)
-
-
-# guzik = Button(root,text="Kliknij mnie",command=lambda: updateLicznik())
-# guzik.grid(column=0,row=0)
-# root.bind("<Control-Button-1>",updateLicznik())
-
-
-# napis = Label(root,text=f"{zmienna_na_licznik}")
-# napis.grid(column=1,row=0)
 
 root.mainloop()
